@@ -1,2 +1,2 @@
 # Queue-Mamanger-AuthServer
-This server will be used for managing the autentification process of the Queue Manager server.
+This server implements the management of the autentification process of the Queue Manager server.
