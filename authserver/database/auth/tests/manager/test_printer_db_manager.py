@@ -12,15 +12,14 @@ __status__ = "Development"
 
 
 def _add_printer(db_manager):
-    printer = db_manager.insert_printer(2, "000.00000.0000", "1234")
+    printer, printer_key = db_manager.insert_printer(2, "000.00000.0000")
+    assert printer.verify_key(printer_key)
+
     return printer
 
 
 def test_printers_db_manager(db_manager):
     expected_printer = _add_printer(db_manager)
-
-    printer = db_manager.insert_printer(3, "001.00000.0000")
-    assert printer.printerKey
 
     printer = db_manager.get_printers(id=2)
     assert expected_printer == printer

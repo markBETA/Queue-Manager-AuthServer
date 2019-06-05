@@ -15,13 +15,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .table_names import (
     PRINTER_TABLE
 )
-from ..definitions import db_conn as db
+from ..definitions import bind_key, db_conn as db
 
 
-class Printer(db.Model):
+class PrinterAuth(db.Model):
     """
     Definition of table PRINTER_TABLE that contains all users
     """
+    __bind_key__ = bind_key
     __tablename__ = PRINTER_TABLE
 
     id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=False)

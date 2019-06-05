@@ -13,7 +13,9 @@ __status__ = "Development"
 from .definitions import api, api_bp
 from .jwt_manager import jwt_manager
 from .printers import api as printers_ns
+from .printers.definitions import NAMESPACE_IDENTIFIER as PRINTERS_NAMESPACE_ID
 from .users import api as users_ns
+from .users.definitions import NAMESPACE_IDENTIFIER as USERS_NAMESPACE_ID
 
 
 def init_app(app):
@@ -26,8 +28,9 @@ def init_app(app):
     # Initialize the API object
     api.init_app(api_bp, add_specs=(app.config.get("DEBUG") > 0))
     # Add the namespaces to the API object
-    api.add_namespace(printers_ns, "/printer")
-    api.add_namespace(users_ns, "/user")
+    api.add_namespace(printers_ns, '/' + PRINTERS_NAMESPACE_ID)
+    api.add_namespace(users_ns, '/' + USERS_NAMESPACE_ID)
+
     # Register the API blueprint
     app.register_blueprint(api_bp, url_prefix='/api')
 

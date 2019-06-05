@@ -18,7 +18,7 @@ from .exceptions import (
     InvalidParameter
 )
 from ..models import (
-    Printer
+    PrinterAuth
 )
 
 
@@ -46,7 +46,7 @@ class DBManagerPrinter(DBManagerBase):
             printer_key = self._generate_random_key()
 
         # Create the printer object
-        printer = Printer(
+        printer = PrinterAuth(
             id=printer_id,
             serialNumber=serial_number
         )
@@ -61,15 +61,15 @@ class DBManagerPrinter(DBManagerBase):
         if self.autocommit:
             self.commit_changes()
 
-        return printer
+        return printer, printer_key
 
     def get_printers(self, **kwargs):
         # Create the query object
-        query = Printer.query
+        query = PrinterAuth.query
 
         # Filter by the given kwargs
         for key, value in kwargs.items():
-            if hasattr(Printer, key):
+            if hasattr(PrinterAuth, key):
                 if key in ("id", "serialNumber"):
                     return self.execute_query(query.filter_by(**{key: value}), use_list=False)
                 else:
@@ -80,7 +80,7 @@ class DBManagerPrinter(DBManagerBase):
         # Return all the filtered items
         return self.execute_query(query)
 
-    def delete_printer(self, printer: Printer):
+    def delete_printer(self, printer: PrinterAuth):
         # Delete the row at the database
         self.del_row(printer)
 
@@ -88,12 +88,12 @@ class DBManagerPrinter(DBManagerBase):
         if self.autocommit:
             self.commit_changes()
 
-    def update_printer(self, printer: Printer, **kwargs):
+    def update_printer(self, printer: PrinterAuth, **kwargs):
         # Modify the specified printer fields
         for key, value in kwargs.items():
             if key == "printerKey":
                 printer.hash_key(value)
-            elif hasattr(Printer, key):
+            elif hasattr(PrinterAuth, key):
                 setattr(printer, key, value)
             else:
                 raise InvalidParameter("Invalid '{}' parameter".format(key))

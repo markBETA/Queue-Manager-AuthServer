@@ -22,3 +22,8 @@ printer_credentials_model = api.model('PrinterCredentials', {
     'serial_number': fields.String(required=True),
     'key': fields.String(required=True),
 })
+
+printer_model = api.model('Printer', {
+    'id': fields.Integer(required=True),
+    'serial_number': fields.String(required=True, attribute="serialNumber"),
+})

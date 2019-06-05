@@ -15,9 +15,16 @@ import click
 from flask import current_app
 from flask.cli import with_appcontext
 
-from .app import db_mgr as app_db_mgr
-from .auth import db_mgr as auth_db_mgr
-from .definitions import db_conn as db
+from .definitions import bind_key, db_conn as db
+from .listeners import (
+    user_initial_values, printer_initial_values
+)
+from .manager import (
+    DBManager, DBManagerError, InvalidParameter, DBInternalError, UniqueConstraintError
+)
+from .models import (
+    UserAuth, PrinterAuth
+)
 
 
 ########################
@@ -27,10 +34,8 @@ from .definitions import db_conn as db
 def init_db():
     """Clear existing data and create new tables."""
     with current_app.app_context():
-        from .app import init_db as app_init_db
-        from .auth import init_db as auth_init_db
         db.drop_all()
-        db.create_all()
+        db.create_all(bind=[bind_key])
 
 
 @click.command('init-db')
@@ -46,3 +51,10 @@ def init_app(app):
     db.init_app(app)
     db.engine.pool._use_threadlocal = True
     app.cli.add_command(init_db_command)
+
+
+####################
+# DATABASE MANAGER #
+####################
+
+db_mgr = DBManager()

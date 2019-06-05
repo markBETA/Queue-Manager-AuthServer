@@ -15,11 +15,11 @@ __status__ = "Development"
 # PRINTER TABLES #
 ##################
 
-PRINTER_TABLE = 'printers'
+PRINTER_TABLE = 'printers_access'
 
 
 ###############
 # USER TABLES #
 ###############
 
-USERS_TABLE = 'users'
+USERS_TABLE = 'users_access'

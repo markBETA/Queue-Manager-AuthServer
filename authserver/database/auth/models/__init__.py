@@ -11,8 +11,8 @@ __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
 
 from .printer import (
-    Printer
+    PrinterAuth
 )
 from .users import (
-    User
+    UserAuth
 )

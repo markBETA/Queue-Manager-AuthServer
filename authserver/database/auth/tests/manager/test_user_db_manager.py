@@ -12,7 +12,7 @@ __status__ = "Development"
 
 
 def _add_user(db_manager):
-    user = db_manager.insert_user("test-user", "Test User", "test@test.com", "1234", is_admin=False)
+    user = db_manager.insert_user(2, "test@test.com", "1234", is_admin=False)
     return user
 
 
@@ -22,15 +22,15 @@ def test_user_db_manager(db_manager):
     user = db_manager.get_users(isAdmin=False)
     assert expected_user == user[0]
 
-    user = db_manager.get_users(username="test-user")
+    user = db_manager.get_users(email="test@test.com")
     assert expected_user == user
     assert user.verify_password("1234")
 
     db_manager.update_user(user, email="test-user@test.com", password="abcd")
-    user = db_manager.get_users(username="test-user")
-    assert user.email == "test-user@test.com"
+    user = db_manager.get_users(email="test-user@test.com")
+    assert user.id == expected_user.id
     assert user.verify_password("abcd")
 
     db_manager.delete_user(user)
-    user = db_manager.get_users(username="test-user")
+    user = db_manager.get_users(email="test-user@test.com")
     assert user is None

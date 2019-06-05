@@ -13,7 +13,7 @@ __status__ = "Development"
 from werkzeug.security import generate_password_hash
 
 from .models import (
-    User, Printer
+    UserAuth, PrinterAuth
 )
 
 
@@ -23,9 +23,9 @@ from .models import (
 
 def user_initial_values():
     return [
-        User(
-            username="bcn3d", fullname="BCN3D Admin User", email="cloudservices@bcn3dtechnologies.com",
-            password=generate_password_hash("bcn3d"), isAdmin=True
+        UserAuth(
+            id=1, email="cloudservices@bcn3dtechnologies.com", password=generate_password_hash("bcn3d"), isAdmin=True,
+            enabled=True
         ),
     ]
 
@@ -36,7 +36,7 @@ def user_initial_values():
 
 def printer_initial_values():
     return [
-        Printer(
-            id=1, serialNumber="020.180622.3180", printerKey=generate_password_hash('rdRwtlHI$$Y!L:Mff(JtHjUdAf!{w_in')
-        )
+        PrinterAuth(
+            id=1, serialNumber="020.238778.0823", printerKey=generate_password_hash('rdRwtlHI$$Y!L:Mff(JtHjUdAf!{w_in')
+        ),
     ]

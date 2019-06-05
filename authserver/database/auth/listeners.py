@@ -17,7 +17,7 @@ from .initial_values import (
     user_initial_values, printer_initial_values
 )
 from .models import (
-    User, Printer
+    UserAuth, PrinterAuth
 )
 
 
@@ -31,7 +31,7 @@ def _add_rows(row_list):
 # USER TABLE LISTENERS #
 ########################
 
-@listens_for(User.__table__, "after_create")
+@listens_for(UserAuth.__table__, "after_create")
 def insert_initial_values(*_args, **_kwargs):
     _add_rows(user_initial_values())
 
@@ -40,6 +40,6 @@ def insert_initial_values(*_args, **_kwargs):
 # PRINTER TABLE LISTENERS #
 ###########################
 
-@listens_for(Printer.__table__, "after_create")
+@listens_for(PrinterAuth.__table__, "after_create")
 def insert_initial_values(*_args, **_kwargs):
     _add_rows(printer_initial_values())

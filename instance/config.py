@@ -10,18 +10,21 @@ ENV = "development" if DEBUG > 0 else "production"
 
 # SECRET_KEY = os.getenv('SECRET_KEY', 'my_secret_key')
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///data/database.db'
+SQLALCHEMY_BINDS = {
+    'app': 'postgresql+psycopg2://postgres:dev@postgres.dev.server/app',
+    'auth': 'postgresql+psycopg2://postgres:dev@postgres.dev.server/auth'
+}
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_ECHO = False
 
 RESTPLUS_VALIDATE = True
 SWAGGER_UI_DOC_EXPANSION = 'list'
 
-REDIS_SERVER_HOST = 'localhost'
+REDIS_SERVER_HOST = 'redis.dev.server'
 REDIS_SERVER_PORT = 6379
 TOKEN_BLACKLIST_REDIS_DB = 0
 
-JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=1)
+JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(seconds=15)
 JWT_REFRESH_TOKEN_EXPIRES = datetime.timedelta(days=30)
 JWT_BLACKLIST_ENABLED = True
 JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']

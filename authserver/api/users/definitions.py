@@ -12,7 +12,7 @@ __status__ = "Development"
 
 from flask_restplus import Namespace
 
-NAMESPACE_IDENTIFIER = "user"
+NAMESPACE_IDENTIFIER = "users"
 NAMESPACE_DESCRIPTION = "User authentication related operations"
 
 

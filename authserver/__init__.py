@@ -16,13 +16,24 @@ from eventlet import monkey_patch
 monkey_patch()
 
 
-def create_app(name=__name__, override_config=None, init_db_manager_values=False):
+def create_app(name=__name__, override_config=None, init_db_manager_values=False, enabled_modules="all"):
     """Create and configure an instance of the Flask application."""
+    if enabled_modules == "all":
+        enabled_modules = {
+            "flask-cors",
+            "error-handlers",
+            "auth-database",
+            "app-database",
+            "blacklist-manager",
+            "api"
+        }
+
     from flask import Flask
     app = Flask(name, instance_relative_config=True)
 
-    from flask_cors import CORS
-    CORS(app)
+    if "flask-cors" in enabled_modules:
+        from flask_cors import CORS
+        CORS(app)
 
     if override_config is None:
         # Load the instance config, if it exists, when not testing
@@ -40,25 +51,30 @@ def create_app(name=__name__, override_config=None, init_db_manager_values=False
         app.logger.setLevel(INFO)
 
     # Set the exception handlers
-    from .error_handlers import set_exception_handlers
-    set_exception_handlers(app)
-
-    # Register the database commands
-    from .database import init_app as db_init_app
-    db_init_app(app)
+    if "error-handlers" in enabled_modules:
+        from .error_handlers import set_exception_handlers
+        set_exception_handlers(app)
 
     # Init blacklist manager
-    from .blacklist_manager import jwt_blacklist_manager
-    jwt_blacklist_manager.init_app(app)
+    if "blacklist-manager" in enabled_modules:
+        from .blacklist_manager import jwt_blacklist_manager
+        jwt_blacklist_manager.init_app(app)
 
     # Register the API blueprint
-    from .api import init_app as api_init_app
-    api_init_app(app)
+    if "api" in enabled_modules:
+        from .api import init_app as api_init_app
+        api_init_app(app)
 
-    if init_db_manager_values:
+    with app.app_context():
+        # Register the app database commands
+        if "app-database" in enabled_modules or "auth-database" in enabled_modules:
+            from .database import init_app as db_init_app
+            db_init_app(app)
+
         # Init the database manager
-        with app.app_context():
-            from .database import db_mgr
-            db_mgr.init_static_values()
+        if init_db_manager_values:
+            if "auth-database" in enabled_modules:
+                from .database import auth_db_mgr
+                auth_db_mgr.init_static_values()
 
     return app

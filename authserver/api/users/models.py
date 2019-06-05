@@ -31,11 +31,20 @@ user_register_model = api.model('UserRegister', {
     'password': fields.String(required=True),
 })
 
-user_model = api.model('User', {
+user_data_model = api.model('UserData', {
     'id': fields.Integer(required=True),
-    'username': fields.String(required=True),
-    'fullname': fields.String(required=True),
+    'username': fields.String,
+    'fullname': fields.String,
     'email': EmailField(required=True),
-    'is_admin': fields.Boolean(attribute="isAdmin", required=True),
-    'registered_on': fields.DateTime(attribute="registeredOn", required=True)
+    'registered_on': fields.DateTime(attribute="registeredOn")
+})
+
+authorization_data_model = api.model('AuthorizationData', {
+    'is_admin': fields.Boolean(attribute="isAdmin"),
+    'enabled': fields.Boolean,
+})
+
+user_model = api.model('User', {
+    'user_data': fields.Nested(user_data_model),
+    'authorization_data': fields.Nested(authorization_data_model),
 })

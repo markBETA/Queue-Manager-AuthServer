@@ -25,6 +25,8 @@ setup(
         'flask-jwt-extended',
         'pymysql',
         'redis',
-        'cryptography'
+        'cryptography',
+        'psycopg2',
+        'parse'
     ]
 )

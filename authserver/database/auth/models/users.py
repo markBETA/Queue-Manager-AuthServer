@@ -15,22 +15,21 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .table_names import (
     USERS_TABLE
 )
-from ..definitions import db_conn as db
+from ..definitions import bind_key, db_conn as db
 
 
-class User(db.Model):
+class UserAuth(db.Model):
     """
     Definition of table USERS_TABLE that contains all users
     """
+    __bind_key__ = bind_key
     __tablename__ = USERS_TABLE
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    username = db.Column(db.String(256), unique=True)
-    fullname = db.Column(db.String(256))
-    email = db.Column(db.String(256), unique=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=False)
+    email = db.Column(db.String(256), unique=True, nullable=False)
     password = db.Column(db.String(256))
-    isAdmin = db.Column(db.Boolean, nullable=False, default=False)
-    registeredOn = db.Column(db.DateTime)
+    isAdmin = db.Column(db.Boolean, nullable=False)
+    enabled = db.Column(db.Boolean, nullable=False, default=False)
 
     def hash_password(self, password):
         self.password = generate_password_hash(password)
@@ -50,6 +49,5 @@ class User(db.Model):
         }
 
     def __repr__(self):
-        return '[{}]<id: {} / username: {} / fullname: {} / isAdmin: {}>'.format(self.__tablename__, self.id,
-                                                                                 self.username, self.fullname,
-                                                                                 self.isAdmin)
+        return '[{}]<id: {} / email: {} / isAdmin: {}>'.format(self.__tablename__, self.id,
+                                                               self.email, self.isAdmin)

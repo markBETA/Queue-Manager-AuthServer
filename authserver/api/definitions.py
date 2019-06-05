@@ -18,25 +18,35 @@ from flask_restplus import fields, Api
 # API GLOBAL DEFINITION #
 #########################
 
+api_bp = Blueprint('api', __name__)
+
 api = Api(
     title='Queue Manager Auth API',
     version='0.1',
     description='This API manages all the authentication operations for the queue manager',
     authorizations={
-        'refresh_jwt': {
+        'user_refresh_jwt': {
             "type": "apiKey",
             "in": "header",
             "name": "Authorization",
         },
-        'access_jwt': {
+        'user_access_jwt': {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization",
+        },
+        'printer_refresh_jwt': {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization",
+        },
+        'printer_access_jwt': {
             "type": "apiKey",
             "in": "header",
             "name": "Authorization",
         }
     },
 )
-
-api_bp = Blueprint('api', __name__)
 
 
 ####################
