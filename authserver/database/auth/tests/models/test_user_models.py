@@ -10,17 +10,17 @@ __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
 
-from authserver.database import (
-    User
+from ...initial_values import user_initial_values
+from ...models import (
+    UserAuth
 )
-from authserver.database import user_initial_values
 
 
 def add_user(session):
-    user = User(
-        username="test",
-        fullname="Test User",
-        email="test@test.com"
+    user = UserAuth(
+        id=2,
+        email="test@test.com",
+        isAdmin=False,
     )
     user.hash_password("1234")
 
@@ -49,13 +49,12 @@ def test_user_model(session):
         "is_admin": user.isAdmin
     }
 
-    users = User.query.all()
+    users = UserAuth.query.all()
     
     assert len(users) == len(expected_users)
     
     for i in range(len(expected_users)):
         assert expected_users[i].id == users[i].id
-        assert expected_users[i].username == users[i].username
-        assert expected_users[i].fullname == users[i].fullname
         assert expected_users[i].email == users[i].email
         assert expected_users[i].isAdmin == users[i].isAdmin
+        assert expected_users[i].enabled == users[i].enabled

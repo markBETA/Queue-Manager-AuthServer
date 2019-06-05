@@ -14,14 +14,22 @@ __status__ = "Development"
 from flask_jwt_extended import create_access_token, create_refresh_token
 
 
-def test_blacklist_manager(db_manager, jwt_blacklist_manager):
-    user = db_manager.get_users(id=1)
-    user_access_token = create_access_token(user.identity)
-    user_refresh_token = create_refresh_token(user.identity)
+def test_blacklist_manager(jwt_manager, jwt_blacklist_manager):
+    user_identity = {
+        "type": "user",
+        "id": 1,
+        "is_admin": True
+    }
+    user_access_token = create_access_token(user_identity)
+    user_refresh_token = create_refresh_token(user_identity)
 
-    printer = db_manager.get_printers(id=1)
-    printer_access_token = create_access_token(printer.identity)
-    printer_refresh_token = create_refresh_token(printer.identity)
+    printer_identity = {
+        "type": "printer",
+        "id": 1,
+        "serial_number": "000.00000.0000"
+    }
+    printer_access_token = create_access_token(printer_identity)
+    printer_refresh_token = create_refresh_token(printer_identity)
 
     assert jwt_blacklist_manager.check_if_token_is_revoked(user_access_token, encoded=True)
     assert jwt_blacklist_manager.check_if_token_is_revoked(printer_access_token, encoded=True)
@@ -43,7 +51,7 @@ def test_blacklist_manager(db_manager, jwt_blacklist_manager):
     assert not jwt_blacklist_manager.check_if_token_is_revoked(printer_access_token, encoded=True)
     assert not jwt_blacklist_manager.check_if_token_is_revoked(printer_refresh_token, encoded=True)
 
-    new_printer_access_token = create_access_token(printer.identity)
+    new_printer_access_token = create_access_token(printer_identity)
     jwt_blacklist_manager.update_refresh_associated_access_token(printer_refresh_token, new_printer_access_token)
 
     assert jwt_blacklist_manager.check_if_token_is_revoked(user_access_token, encoded=True)
