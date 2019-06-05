@@ -31,10 +31,6 @@ def create_app(name=__name__, override_config=None, init_db_manager_values=False
     from flask import Flask
     app = Flask(name, instance_relative_config=True)
 
-    if "flask-cors" in enabled_modules:
-        from flask_cors import CORS
-        CORS(app)
-
     if override_config is None:
         # Load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -50,31 +46,46 @@ def create_app(name=__name__, override_config=None, init_db_manager_values=False
     else:
         app.logger.setLevel(INFO)
 
-    # Set the exception handlers
-    if "error-handlers" in enabled_modules:
-        from .error_handlers import set_exception_handlers
-        set_exception_handlers(app)
-
-    # Init blacklist manager
-    if "blacklist-manager" in enabled_modules:
-        from .blacklist_manager import jwt_blacklist_manager
-        jwt_blacklist_manager.init_app(app)
-
-    # Register the API blueprint
-    if "api" in enabled_modules:
-        from .api import init_app as api_init_app
-        api_init_app(app)
+    app.logger.info("Loading server modules...")
 
     with app.app_context():
+        # Init Flask-CORS plugin
+        if "flask-cors" in enabled_modules:
+            from flask_cors import CORS
+            CORS(app)
+
         # Register the app database commands
         if "app-database" in enabled_modules or "auth-database" in enabled_modules:
             from .database import init_app as db_init_app
             db_init_app(app)
 
-        # Init the database manager
-        if init_db_manager_values:
-            if "auth-database" in enabled_modules:
-                from .database import auth_db_mgr
-                auth_db_mgr.init_static_values()
+        # Init the auth database manager
+        if init_db_manager_values and "auth-database" in enabled_modules:
+            from .database import auth_db_mgr
+            auth_db_mgr.init_static_values()
+
+        # Init the app database manager
+        if init_db_manager_values and "app-database" in enabled_modules:
+            from .database import app_db_mgr
+            app_db_mgr.init_static_values()
+            app_db_mgr.init_printers_state()
+            app_db_mgr.init_jobs_can_be_printed()
+
+        # Set the exception handlers
+        if "error-handlers" in enabled_modules:
+            from .error_handlers import set_exception_handlers
+            set_exception_handlers(app)
+
+        # Init blacklist manager
+        if "blacklist-manager" in enabled_modules:
+            from .blacklist_manager import jwt_blacklist_manager
+            jwt_blacklist_manager.init_app(app)
+
+        # Register the API blueprint
+        if "api" in enabled_modules:
+            from .api import init_app as api_init_app
+            api_init_app(app)
+
+    app.logger.info("Server modules loaded")
 
     return app
