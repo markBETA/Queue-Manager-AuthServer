@@ -67,7 +67,8 @@ class Users(Resource):
     @api.doc(id="register_user")
     @api.expect(user_register_model, validate=True)
     @api.response(201, "User created successfully", user_model)
-    @api.response(400, "Username or email already in use")
+    @api.response(400, "Input payload validation failed")
+    @api.response(409, "Username or email already in use")
     @api.response(500, "Unable to read/write data at the database")
     def post(self):
         """
