@@ -24,14 +24,14 @@ REDIS_SERVER_HOST = 'redis.dev.server'
 REDIS_SERVER_PORT = 6379
 TOKEN_BLACKLIST_REDIS_DB = 0
 
-JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(seconds=15)
+JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(seconds=45)
 JWT_REFRESH_TOKEN_EXPIRES = datetime.timedelta(days=30)
 JWT_BLACKLIST_ENABLED = True
 JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
 JWT_ERROR_MESSAGE_KEY = "message"
 JWT_IDENTITY_CLAIM = "sub"
 JWT_ALGORITHM = "RS256"
-with open("instance/jwtRS256.key", "r") as f:
+with open("instance/jwt.key", "r") as f:
     JWT_PRIVATE_KEY = f.read()
-with open("instance/jwtRS256.key.pub", "r") as f:
+with open("instance/jwt.key.pub", "r") as f:
     JWT_PUBLIC_KEY = f.read()

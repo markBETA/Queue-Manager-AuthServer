@@ -20,7 +20,8 @@ from flask_restplus.mask import apply as apply_mask
 
 from .definitions import api
 from .models import (
-    user_credentials_model, user_register_model, user_model, authorization_data_model
+    user_credentials_model, user_register_model, user_model, authorization_data_model, user_data_model,
+    edit_user_model
 )
 from ..common_models import (
     token_create_model, token_refresh_model
@@ -123,7 +124,7 @@ class CurrentUser(Resource):
     @jwt_required
     def get(self):
         """
-        Get the user information from the identity of the given access token
+        Get the user information from the identity of the given access token.
         """
         current_user = get_jwt_identity()
 
@@ -138,6 +139,84 @@ class CurrentUser(Resource):
         authorization_data = auth_db_mgr.get_users(id=user.id)
 
         return marshal({"user_data": user, "authorization_data": authorization_data}, user_model), 200
+
+    @api.doc(id="edit_current_user")
+    @api.doc(security="user_access_jwt")
+    @api.expect(edit_user_model, validate=True)
+    @api.response(200, "Success", user_data_model)
+    @api.response(422, "Invalid access token")
+    @api.response(401, "Unauthorized")
+    @api.response(403, "Forbidden")
+    @api.response(404, "User not found")
+    @api.response(500, "Unable to read/write the data at the database")
+    @jwt_required
+    def put(self):
+        """
+        Edit the user information from the identity of the given access token.
+        """
+        # Delete the unwanted keys from the Json payload
+        payload = apply_mask(request.json, edit_user_model, skip=True)
+
+        if not user_credentials_model['email'].validate(payload["email"]):
+            return {
+                'message': 'Input payload validation failed',
+                'errors': {
+                    'email': "Invalid email format"
+                }
+            }, 400
+
+        current_password = payload.pop('current_password', '')
+        current_user = get_jwt_identity()
+
+        if current_user.get('type') != "user":
+            return {'message': 'Only user access tokens are allowed.'}, 422
+
+        user = app_db_mgr.get_users(id=current_user.get('id'))
+        auth_data = auth_db_mgr.get_users(id=user.id)
+
+        if user is None or auth_data is None:
+            return {'message': 'There isn\'t any registered user with this identifier.'}, 404
+        elif not auth_data.verify_password(current_password):
+            return {'message': 'Incorrect current password for this user.'}, 401
+
+        # Prepare which fields to update go to each database
+        auth_fields_to_update = {}
+        user_data_fields_to_update = {}
+
+        for key, value in payload.items():
+            if key == 'new_password':
+                auth_fields_to_update['password'] = value
+            elif key == 'email':
+                auth_fields_to_update[key] = value
+                user_data_fields_to_update[key] = value
+            else:
+                user_data_fields_to_update[key] = value
+
+        # Update the authorization fields
+        if auth_fields_to_update:
+            try:
+                auth_db_mgr.update_user(auth_data, **auth_fields_to_update)
+            except AuthUniqueConstraintError as e:
+                if e.column == "username":
+                    return {'message': 'Username already in use'}, 409
+                elif e.column == "email":
+                    return {'message': 'Email already in use'}, 409
+                else:
+                    return {'message': 'Unable to read/write data at the database.'}, 500
+
+        # Update the user data fields
+        if user_data_fields_to_update:
+            try:
+                app_db_mgr.update_user(user, **user_data_fields_to_update)
+            except AppUniqueConstraintError as e:
+                if e.column == "username":
+                    return {'message': 'Username already in use'}, 409
+                elif e.column == "email":
+                    return {'message': 'Email already in use'}, 409
+                else:
+                    return {'message': 'Unable to read/write data at the database.'}, 500
+
+        return {'message': 'User data updated successfully.'}, 200
 
 
 @api.route("/<int:user_id>")
@@ -188,23 +267,29 @@ class User(Resource):
         Delete the user from it's ID. Only admin users can delete another users.
         """
         current_user = get_jwt_identity()
+        current_user_is_admin = current_user.get('is_admin')
 
         if current_user.get('type') != "user":
             return {'message': 'Only user access tokens are allowed.'}, 422
-        if current_user.get('id') != user_id and not current_user.get('is_admin'):
+        if current_user.get('id') != user_id and not current_user_is_admin:
             return {'message': 'You need to be an administrator to delete another user.'}, 403
+
+        # Check if the user to delete isn't the only admin user
+        if current_user_is_admin:
+            if auth_db_mgr.count_admin_users() <= 1:
+                return {'message': 'At least one admin user is needed.'}, 403
 
         user = app_db_mgr.get_users(id=user_id)
 
         if user is None:
             return {'message': 'There isn\'t any registered user with this identifier.'}, 404
-        else:
-            app_db_mgr.delete_user(user)
 
         authorization_data = auth_db_mgr.get_users(id=user.id)
 
         if authorization_data is not None:
             auth_db_mgr.delete_user(authorization_data)
+
+        app_db_mgr.delete_user(user)
 
         return marshal({"user_data": user, "authorization_data": authorization_data}, user_model), 200
 

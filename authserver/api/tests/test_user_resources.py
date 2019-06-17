@@ -168,6 +168,97 @@ def test_get_current_user(app_db_mgr, auth_db_mgr, http_client):
     assert r.json == marshal({"user_data": user_data, "authorization_data": authorization_data}, user_model)
 
 
+def test_edit_current_user(app_db_mgr, auth_db_mgr, http_client):
+    normal_user, _ = create_test_user(app_db_mgr, auth_db_mgr, enabled=True)
+    normal_user_id = normal_user.id
+    normal_user_email = normal_user.email
+
+    normal_user_access_token, _ = login_user(http_client, normal_user_email, "1234")
+    normal_user_authorization_header = {"Authorization": "Bearer "+normal_user_access_token}
+
+    edit_user_data = {
+        'current_password': '1234',
+        'username': 'test-edited',
+        'fullname': 'Test User Edited',
+        'email': 'test-edited@test.com',
+        'new_password': '1234abc'
+    }
+
+    r = http_client.put("api/users/current", json=edit_user_data)
+    assert r.status_code == 401
+    assert r.json == {"message": "Missing Authorization Header"}
+
+    r = http_client.put("api/users/current", headers={"Authorization": "Bearer "}, json=edit_user_data)
+    assert r.status_code == 422
+    assert r.json == {'message': "Bad Authorization header. Expected value 'Bearer <JWT>'"}
+
+    r = http_client.put("api/users/current", headers=normal_user_authorization_header, json={})
+    assert r.status_code == 400
+    assert r.json == {
+        'message': 'Input payload validation failed',
+        'errors': {
+            'current_password': "'current_password' is a required property",
+        }
+    }
+
+    edit_user_data_fail = edit_user_data.copy()
+    edit_user_data_fail["email"] = "test"
+
+    r = http_client.put("api/users/current", headers=normal_user_authorization_header, json=edit_user_data_fail)
+    assert r.status_code == 400
+    assert r.json == {
+        'message': 'Input payload validation failed',
+        'errors': {
+            'email': "Invalid email format"
+        }
+    }
+
+    edit_user_data_fail = edit_user_data.copy()
+    edit_user_data_fail["username"] = 1.0
+
+    r = http_client.put("api/users/current", headers=normal_user_authorization_header, json=edit_user_data_fail)
+    assert r.status_code == 400
+    assert r.json == {
+        'message': 'Input payload validation failed',
+        'errors': {
+            'username': "1.0 is not of type 'string'"
+        }
+    }
+
+    edit_user_data_fail = edit_user_data.copy()
+    edit_user_data_fail["current_password"] = 'abcd'
+
+    r = http_client.put("api/users/current", headers=normal_user_authorization_header, json=edit_user_data_fail)
+    assert r.status_code == 401
+    assert r.json == {'message': 'Incorrect current password for this user.'}
+
+    r = http_client.put("api/users/current", headers=normal_user_authorization_header, json=edit_user_data)
+    user_data = app_db_mgr.get_users(id=normal_user_id)
+    auth_data = auth_db_mgr.get_users(id=normal_user_id)
+    assert r.status_code == 200
+    assert r.json == {'message': 'User data updated successfully.'}
+    assert user_data.username == edit_user_data['username']
+    assert user_data.fullname == edit_user_data['fullname']
+    assert user_data.email == edit_user_data['email']
+    assert auth_data.verify_password(edit_user_data['new_password'])
+
+    edit_user_data["current_password"] = "1234abc"
+    edit_user_data_fail = edit_user_data.copy()
+    edit_user_data_fail["email"] = "test0@test.com"
+    create_test_user(app_db_mgr, auth_db_mgr, enabled=True)
+
+    r = http_client.put("api/users/current", headers=normal_user_authorization_header, json=edit_user_data_fail)
+    assert r.status_code == 409
+    assert r.json == {'message': 'Email already in use'}
+
+    edit_user_data_fail = edit_user_data.copy()
+    edit_user_data_fail["username"] = "test0"
+
+    r = http_client.put("api/users/current", headers=normal_user_authorization_header, json=edit_user_data_fail)
+    assert r.status_code == 409
+    assert r.json == {'message': 'Username already in use'}
+
+
 def test_get_user(app_db_mgr, auth_db_mgr, http_client):
     normal_user, _ = create_test_user(app_db_mgr, auth_db_mgr, enabled=True)
     normal_user_email = normal_user.email
@@ -218,6 +309,7 @@ def test_delete_user(app_db_mgr, auth_db_mgr, http_client):
     normal_user_id = normal_user.id
     admin_user, _ = create_test_user(app_db_mgr, auth_db_mgr, i=1, enabled=True, is_admin=True)
     admin_user_email = admin_user.email
+    admin_user_id = admin_user.id
 
     normal_user_access_token, _ = login_user(http_client, normal_user_email, "1234")
     normal_user_authorization_header = {"Authorization": "Bearer "+normal_user_access_token}
@@ -258,6 +350,10 @@ def test_delete_user(app_db_mgr, auth_db_mgr, http_client):
     assert r.json == marshal({"user_data": user_data, "authorization_data": authorization_data}, user_model)
     assert app_db_mgr.get_users(id=1) is None
     assert auth_db_mgr.get_users(id=1) is None
+
+    r = http_client.delete("api/users/" + str(admin_user_id), headers=admin_user_authorization_header)
+    assert r.status_code == 403
+    assert r.json == {'message': 'At least one admin user is needed.'}
 
 
 def test_authorize_user(app_db_mgr, auth_db_mgr, http_client):

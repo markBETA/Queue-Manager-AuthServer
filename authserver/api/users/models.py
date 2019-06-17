@@ -48,3 +48,11 @@ user_model = api.model('User', {
     'user_data': fields.Nested(user_data_model),
     'authorization_data': fields.Nested(authorization_data_model),
 })
+
+edit_user_model = api.model('EditUser', {
+    'current_password': fields.String(required=True),
+    'username': fields.String,
+    'fullname': fields.String,
+    'email': EmailField,
+    'new_password': fields.String,
+})
