@@ -85,11 +85,13 @@ class DBManagerBase(object):
         self.db_session.delete(row_obj)
         current_app.logger.info("Object '%s' deleted from the database", str(row_obj))
 
-    def execute_query(self, query: Query, use_list=True):
+    def execute_query(self, query: Query, use_list=True, count=False):
         try:
             if self._session_object is not None:
                 query = query.with_session(self._session_object)
-            if use_list:
+            if count:
+                return query.count()
+            elif use_list:
                 return query.all()
             else:
                 return query.first()

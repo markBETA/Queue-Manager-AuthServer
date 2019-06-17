@@ -69,6 +69,13 @@ class DBManagerUsers(DBManagerBase):
         # Return all the filtered items
         return self.execute_query(query)
 
+    def count_admin_users(self):
+        # Create the query object
+        query = UserAuth.query.filter_by(isAdmin=True)
+
+        # Return the count result
+        return self.execute_query(query, count=True)
+
     def delete_user(self, user: UserAuth):
         # Delete the row at the database
         self.del_row(user)
