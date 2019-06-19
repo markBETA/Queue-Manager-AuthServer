@@ -39,7 +39,7 @@ class Users(Resource):
     """
     @api.doc(id="get_users_data")
     @api.doc(security="user_access_jwt")
-    @api.response(200, "Success", user_model)
+    @api.response(200, "Success", [user_model])
     @api.response(422, "Invalid access token")
     @api.response(401, "Unauthorized")
     @api.response(403, "Forbidden")
