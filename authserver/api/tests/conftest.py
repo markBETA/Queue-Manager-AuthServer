@@ -1,4 +1,3 @@
-import datetime
 import os
 
 import pytest
@@ -18,29 +17,6 @@ os.chdir(os.path.dirname(__file__))
 @pytest.fixture(scope='session')
 def app(request):
     """Session-wide test `Flask` application."""
-    settings_override = dict(
-        DEBUG=int(os.getenv('DEBUG', 0)),
-
-        SECRET_KEY=os.getenv('SECRET_KEY', 'my_secret_key'),
-
-        SQLALCHEMY_BINDS={
-            'app': 'postgresql+psycopg2://postgres:dev@postgres.dev.server/app_test',
-            'auth': 'postgresql+psycopg2://postgres:dev@postgres.dev.server/auth_test'
-        },
-        SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        SQLALCHEMY_ECHO=False,
-
-        REDIS_SERVER_HOST='redis.dev.server',
-        REDIS_SERVER_PORT=6379,
-        TOKEN_BLACKLIST_REDIS_DB=10,
-
-        JWT_ACCESS_TOKEN_EXPIRES=datetime.timedelta(minutes=30),
-        JWT_REFRESH_TOKEN_EXPIRES=datetime.timedelta(days=30),
-        JWT_BLACKLIST_ENABLED=True,
-        JWT_BLACKLIST_TOKEN_CHECKS=['access', 'refresh'],
-        JWT_ERROR_MESSAGE_KEY="message",
-        JWT_IDENTITY_CLAIM="sub",
-    )
     enabled_modules = {
         "error-handlers",
         "auth-database",
@@ -48,7 +24,7 @@ def app(request):
         "blacklist-manager",
         "api"
     }
-    app = create_app(__name__, settings_override, enabled_modules=enabled_modules)
+    app = create_app(__name__, testing=True, enabled_modules=enabled_modules)
 
     # Establish an application context before running the tests.
     ctx = app.app_context()

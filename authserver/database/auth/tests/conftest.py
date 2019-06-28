@@ -7,7 +7,6 @@ try:
     from ... import create_app
 except ImportError:
     from .... import create_app
-from ..definitions import bind_key
 from .. import db as _db
 from .. import db_mgr
 
@@ -21,17 +20,10 @@ os.chdir(os.path.dirname(__file__))
 @pytest.fixture(scope='session')
 def app(request):
     """Session-wide test `Flask` application."""
-    settings_override = {
-        'TESTING': True,
-        'SQLALCHEMY_BINDS': {bind_key: 'postgresql+psycopg2://postgres:dev@postgres.dev.server/auth_test'},
-        'SQLALCHEMY_TRACK_MODIFICATIONS': True,
-        'TEST_INPUTS_PATH': 'input',
-        'SECRET_KEY': os.getenv('SECRET_KEY', 'my_secret_key')
-    }
     enabled_modules = {
         "auth-database"
     }
-    app = create_app(__name__, settings_override, enabled_modules=enabled_modules)
+    app = create_app(__name__, testing=True, enabled_modules=enabled_modules)
 
     # Establish an application context before running the tests.
     ctx = app.app_context()

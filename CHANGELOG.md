@@ -1,0 +1,16 @@
+Version 0.0.1
+=============
+    * Added the database manager and the defined models.
+    * Added the blacklist manager to control the active tokens used for authenticate.
+    * Added the api resources for create, edit and delete users and printers and for authenticate them.
+    * Added a full unit test suite of the server.
+
+Version 0.0.2 (BETA version)
+============================
+    * Swagger documentation revised and corrected.
+    * App database module updated to v0.0.2
+    * Blacklist manager module updated to v0.0.2
+    * Updated the application factory.
+    * Updated the configuration files structure.
+    * Some minor bugs corrected
+    * Improved the production environment deployment with Gunicorn.

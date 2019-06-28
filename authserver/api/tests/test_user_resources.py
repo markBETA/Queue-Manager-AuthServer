@@ -5,7 +5,7 @@ This module implements the job namespace resources test suite.
 __author__ = "Marc Bermejo"
 __credits__ = ["Marc Bermejo"]
 __license__ = "GPL-3.0"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
@@ -257,6 +257,16 @@ def test_edit_current_user(app_db_mgr, auth_db_mgr, http_client):
     r = http_client.put("api/users/current", headers=normal_user_authorization_header, json=edit_user_data_fail)
     assert r.status_code == 409
     assert r.json == {'message': 'Username already in use'}
+
+    del edit_user_data_fail["email"]
+    r = http_client.put("api/users/current", headers=normal_user_authorization_header, json=edit_user_data)
+    user_data = app_db_mgr.get_users(id=normal_user_id)
+    auth_data = auth_db_mgr.get_users(id=normal_user_id)
+    assert r.status_code == 200
+    assert r.json == {'message': 'User data updated successfully.'}
+    assert user_data.username == edit_user_data['username']
+    assert user_data.fullname == edit_user_data['fullname']
+    assert auth_data.verify_password(edit_user_data['new_password'])
 
 
 def test_get_user(app_db_mgr, auth_db_mgr, http_client):

@@ -5,7 +5,7 @@ This module defines the all the api resources for the printer authentication nam
 __author__ = "Marc Bermejo"
 __credits__ = ["Marc Bermejo"]
 __license__ = "GPL-3.0"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
@@ -29,7 +29,7 @@ from ...database import auth_db_mgr
 
 
 @api.route("/current")
-class Printer(Resource):
+class CurrentPrinter(Resource):
     """
     /printer/current
     """
@@ -40,7 +40,7 @@ class Printer(Resource):
     @jwt_required
     def get(self):
         """
-        Get the user information from the identity of the given access token
+        Get the printer information from the identity of the given access token.
         """
         current_user = get_jwt_identity()
 
@@ -67,7 +67,7 @@ class PrinterLogin(Resource):
     @api.response(500, "Unable to read the data from the database")
     def post(self):
         """
-        Generate an access and refresh token for a printer if the credentials are correct
+        Generate an access and refresh token for a printer if the credentials are correct.
         """
         # Initialize the credentials variables
         serial_number = request.json["serial_number"]
@@ -107,7 +107,7 @@ class PrinterAccessRefresh(Resource):
     @jwt_refresh_token_required
     def post(self):
         """
-        Generate a new access token with the identity contained in the received refresh token
+        Generate a new access token with the identity contained in the received refresh token.
         """
         refresh_token = get_raw_jwt()
         current_printer = get_jwt_identity()
@@ -141,7 +141,7 @@ class PrinterLogout(Resource):
     @jwt_refresh_token_required
     def post(self):
         """
-        Logout a printer session at the server side using it's refresh token
+        Logout a printer session at the server side using it's refresh token.
         """
         current_printer = get_jwt_identity()
 
@@ -171,7 +171,7 @@ class PrinterCheckAccessToken(Resource):
     @jwt_required
     def post(self):
         """
-        Checks if the given access token is still valid or not
+        Checks if the given access token is still valid or not.
         """
         current_printer = get_jwt_identity()
 
@@ -194,7 +194,7 @@ class PrinterCheckRefreshToken(Resource):
     @jwt_refresh_token_required
     def post(self):
         """
-        Checks if the given refresh token is still valid or not
+        Checks if the given refresh token is still valid or not.
         """
         current_printer = get_jwt_identity()
 
