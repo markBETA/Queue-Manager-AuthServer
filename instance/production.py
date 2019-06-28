@@ -22,6 +22,8 @@ class Config(_Config):
 
     JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=30)
     JWT_REFRESH_TOKEN_EXPIRES = datetime.timedelta(days=30)
+    with open("keys/jwt.key", "r") as f:
+        JWT_PRIVATE_KEY = f.read()
     with open("keys/jwt.key.pub", "r") as f:
         JWT_PUBLIC_KEY = f.read()
 
