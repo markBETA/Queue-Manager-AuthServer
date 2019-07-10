@@ -16,7 +16,7 @@ class Config(object):
         'auth': 'postgresql+psycopg2://postgres:dev@postgres.dev.server/auth'
     }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ECHO = False
+    SQLALCHEMY_ECHO = (DEBUG >= 2)
 
     RESTPLUS_VALIDATE = True
     SWAGGER_UI_DOC_EXPANSION = 'list'
@@ -32,7 +32,5 @@ class Config(object):
     JWT_ERROR_MESSAGE_KEY = "message"
     JWT_IDENTITY_CLAIM = "sub"
     JWT_ALGORITHM = "RS256"
-
-    SOCKETIO_MESSAGE_QUEUE = None
 
     CORS_ALLOWED_ORIGINS = None

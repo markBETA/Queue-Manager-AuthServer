@@ -45,6 +45,9 @@ def create_app(name=__name__, testing=False, init_db_manager_values=False, enabl
         elif env == "production":
             # Load the instance development config
             app.config.from_object("instance.production.Config")
+        elif env == "production-dds":
+            # Load the instance production config for the DDS servers
+            app.config.from_object("instance.production-dds.Config")
         else:
             raise RuntimeError("Unknown environment '{}'".format(env))
 

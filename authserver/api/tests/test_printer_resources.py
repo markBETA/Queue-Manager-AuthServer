@@ -47,7 +47,6 @@ def test_get_current_printer(app_db_mgr, auth_db_mgr, http_client):
     printer_authorization_header = {"Authorization": "Bearer "+printer_access_token}
 
     r = http_client.get("api/printer/current")
-    print(r.json)
     assert r.status_code == 401
     assert r.json == {"message": "Missing Authorization Header"}
 

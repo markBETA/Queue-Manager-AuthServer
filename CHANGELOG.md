@@ -14,3 +14,4 @@ Version 0.0.2 (BETA version)
     * Updated the configuration files structure.
     * Some minor bugs corrected
     * Improved the production environment deployment with Gunicorn.
+    * Added the Domestic Data Streamers specific production config.
