@@ -1,16 +1,18 @@
 """
-This module defines the all the api resources for the user authentication namespace
+This module defines the all the api resources for the users authentication namespace.
 """
 
 __author__ = "Marc Bermejo"
 __credits__ = ["Marc Bermejo"]
 __license__ = "GPL-3.0"
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
 
-from flask import request
+import json
+
+from flask import request, current_app
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_refresh_token_required, jwt_required,
     get_jwt_identity, get_raw_jwt
@@ -28,8 +30,8 @@ from ..common_models import (
 )
 from ...blacklist_manager import jwt_blacklist_manager
 from ...database import auth_db_mgr, app_db_mgr
-from ...database.app import UniqueConstraintError as AppUniqueConstraintError
-from ...database.auth import UniqueConstraintError as AuthUniqueConstraintError
+from ...database.application import UniqueConstraintError as AppUniqueConstraintError
+from ...database.authentication import UniqueConstraintError as AuthUniqueConstraintError
 
 
 @api.route("")
@@ -471,7 +473,10 @@ class UserCheckAccessToken(Resource):
         if current_user.get('type') != "user":
             return {'message': 'Only user access tokens are allowed.'}, 422
 
-        return {'message': 'Valid access token.'}, 200
+        current_user_data = json.dumps(current_user, separators=(',', ':'))
+        headers = {current_app.config.get("IDENTITY_HEADER", "x-identity"): current_user_data}
+
+        return {'message': 'Valid access token.'}, 200, headers
 
 
 @api.route("/check_refresh_token")

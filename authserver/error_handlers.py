@@ -5,7 +5,7 @@ This module sets all the exception handlers of this application
 __author__ = "Marc Bermejo"
 __credits__ = ["Marc Bermejo"]
 __license__ = "GPL-3.0"
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
@@ -14,8 +14,8 @@ from flask import jsonify
 from werkzeug.exceptions import HTTPException
 
 from .blacklist_manager import BlacklistManagerError
-from .database.app import DBManagerError as AppDBManagerError, InvalidParameter as AppInvalidParameter
-from .database.auth import DBManagerError as AuthDBManagerError, InvalidParameter as AuthInvalidParameter
+from .database.application import DBManagerError as AppDBManagerError, InvalidParameter as AppInvalidParameter
+from .database.authentication import DBManagerError as AuthDBManagerError, InvalidParameter as AuthInvalidParameter
 
 
 def set_exception_handlers(app, from_api=False):

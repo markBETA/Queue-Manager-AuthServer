@@ -1,16 +1,18 @@
 """
-This module defines the all the api resources for the printer authentication namespace
+This module defines the all the api resources for the printers authentication namespace.
 """
 
 __author__ = "Marc Bermejo"
 __credits__ = ["Marc Bermejo"]
 __license__ = "GPL-3.0"
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
 
-from flask import request
+import json
+
+from flask import request, current_app
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_refresh_token_required, jwt_required,
     get_jwt_identity, get_raw_jwt
@@ -34,6 +36,7 @@ class CurrentPrinter(Resource):
     /printer/current
     """
     @api.doc(id="printer_login")
+    @api.doc(security="printer_access_token")
     @api.response(200, "Success", printer_model)
     @api.response(401, "Wrong credentials")
     @api.response(500, "Unable to read the data from the database")
@@ -178,7 +181,10 @@ class PrinterCheckAccessToken(Resource):
         if current_printer.get('type') != "printer":
             return {'message': 'Only printer access tokens are allowed.'}, 422
 
-        return {'message': 'Valid access token.'}, 200
+        current_printer_data = json.dumps(current_printer, separators=(',', ':'))
+        headers = {current_app.config.get("IDENTITY_HEADER", "x-identity"): current_printer_data}
+
+        return {'message': 'Valid access token.'}, 200, headers
 
 
 @api.route("/check_refresh_token")

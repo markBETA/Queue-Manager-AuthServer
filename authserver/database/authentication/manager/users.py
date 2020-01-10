@@ -5,7 +5,7 @@ This module contains the database manager class for the user operations.
 __author__ = "Marc Bermejo"
 __credits__ = ["Marc Bermejo"]
 __license__ = "GPL-3.0"
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
@@ -24,6 +24,16 @@ class DBManagerUsers(DBManagerBase):
     This class implements the database manager class for the user operations
     """
     def insert_user(self, user_id: int, email: str, password: str, is_admin: bool = False, enabled: bool = False):
+        """
+        TODO: Docs
+
+        :param user_id:
+        :param email:
+        :param password:
+        :param is_admin:
+        :param enabled:
+        :return:
+        """
         # Check parameter values
         if user_id <= 0:
             raise InvalidParameter("The 'user_id' parameter needs to be an integer bigger than 0")
@@ -53,6 +63,12 @@ class DBManagerUsers(DBManagerBase):
         return user
 
     def get_users(self, **kwargs):
+        """
+        TODO: Docs
+
+        :param kwargs:
+        :return:
+        """
         # Create the query object
         query = UserAuth.query
 
@@ -70,6 +86,11 @@ class DBManagerUsers(DBManagerBase):
         return self.execute_query(query)
 
     def count_admin_users(self):
+        """
+        TODO: Docs
+
+        :return:
+        """
         # Create the query object
         query = UserAuth.query.filter_by(isAdmin=True)
 
@@ -77,6 +98,11 @@ class DBManagerUsers(DBManagerBase):
         return self.execute_query(query, count=True)
 
     def delete_user(self, user: UserAuth):
+        """
+        TODO: Docs
+
+        :param user:
+        """
         # Delete the row at the database
         self.del_row(user)
 
@@ -85,6 +111,13 @@ class DBManagerUsers(DBManagerBase):
             self.commit_changes()
 
     def update_user(self, user: UserAuth, **kwargs):
+        """
+        TODO: Docs
+
+        :param user:
+        :param kwargs:
+        :return:
+        """
         # Modify the specified user fields
         for key, value in kwargs.items():
             if key == "password":

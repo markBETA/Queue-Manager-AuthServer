@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 setup(
     name='authserver',
-    version='0.0.2',
+    version='0.1.0',
     url='https://github.com/BCN3D/Queue-Manager-AuthServer',
     license='GPL-3.0',
     author='Marc Bermejo',

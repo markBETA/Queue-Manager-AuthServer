@@ -1,11 +1,11 @@
 """
-This module implements the user data related database models.
+This module implements the printer data related database models.
 """
 
 __author__ = "Marc Bermejo"
 __credits__ = ["Marc Bermejo"]
 __license__ = "GPL-3.0"
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
@@ -20,7 +20,7 @@ from ..definitions import bind_key, db_conn as db
 
 class PrinterAuth(db.Model):
     """
-    Definition of table PRINTER_TABLE that contains all users
+    Definition of table PRINTER_TABLE that contains all printers
     """
     __bind_key__ = bind_key
     __tablename__ = PRINTER_TABLE

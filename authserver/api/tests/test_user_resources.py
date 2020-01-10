@@ -1,14 +1,16 @@
 """
-This module implements the job namespace resources test suite.
+This module implements the user namespace resources test suite.
 """
 
 __author__ = "Marc Bermejo"
 __credits__ = ["Marc Bermejo"]
 __license__ = "GPL-3.0"
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
+
+import json
 
 from flask_jwt_extended import decode_token
 from flask_restplus import marshal
@@ -600,7 +602,8 @@ def test_user_check_access_token(app_db_mgr, auth_db_mgr, http_client):
 
     r = http_client.post("api/users/check_access_token", headers=normal_user_authorization_header)
     assert r.status_code == 200
-    assert r.json == {'message': 'Valid access token.'}
+    assert "X-Identity" in r.headers.keys()
+    assert json.loads(r.headers.get("X-Identity")) == decode_token(normal_user_access_token)["sub"]
 
     normal_user_authorization_header = {"Authorization": "Bearer " + normal_user_refresh_token}
 

@@ -1,5 +1,5 @@
 """
-This module defines the all the global variables needed by the users namespace.
+This module defines the all the global variables needed by the general namespace.
 """
 
 __author__ = "Marc Bermejo"
@@ -13,8 +13,8 @@ __status__ = "Development"
 from flask_restplus import Namespace
 
 
-NAMESPACE_IDENTIFIER = "users"
-NAMESPACE_DESCRIPTION = "User authentication related operations"
+NAMESPACE_IDENTIFIER = "general"
+NAMESPACE_DESCRIPTION = "User and printer authentication related operations"
 
 
 ################################

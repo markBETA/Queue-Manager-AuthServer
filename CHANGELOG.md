@@ -15,3 +15,11 @@ Version 0.0.2 (BETA version)
     * Some minor bugs corrected
     * Improved the production environment deployment with Gunicorn.
     * Added the Domestic Data Streamers specific production config.
+
+Version 0.1.0
+=============
+    * The blacklist manager isn't an external module anymore.
+    * Added the /general namespace.
+    * Now the check_access_token endpoints adds the X-Identity header with the token subject.
+    * Minor error fixes.
+    * Code refactoring.

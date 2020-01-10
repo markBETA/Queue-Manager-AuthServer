@@ -5,7 +5,7 @@ This module can build a new database according to the structure defined in the '
 __author__ = "Marc Bermejo"
 __credits__ = ["Marc Bermejo"]
 __license__ = "GPL-3.0"
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
@@ -34,6 +34,6 @@ if __name__ == '__main__':
 
     app.app_context().push()
 
-    from authserver.database import init_app, init_db
+    from authserver.database.authentication import init_app, init_db
     init_app(app)
-    init_db()
+    init_db(app)

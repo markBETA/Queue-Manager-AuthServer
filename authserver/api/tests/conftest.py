@@ -1,6 +1,6 @@
 import os
-
 import pytest
+
 from sqlalchemy.orm import close_all_sessions
 
 from ... import create_app

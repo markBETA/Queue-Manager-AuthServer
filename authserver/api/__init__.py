@@ -1,11 +1,11 @@
 """
-This module defines the all the API routes, namespaces, and resources
+This module defines the all the API routes, namespaces, and resources.
 """
 
 __author__ = "Marc Bermejo"
 __credits__ = ["Marc Bermejo"]
 __license__ = "GPL-3.0"
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 __maintainer__ = "Marc Bermejo"
 __email__ = "mbermejo@bcn3dtechnologies.com"
 __status__ = "Development"
@@ -16,6 +16,8 @@ from .printers import api as printers_ns
 from .printers.definitions import NAMESPACE_IDENTIFIER as PRINTERS_NAMESPACE_ID
 from .users import api as users_ns
 from .users.definitions import NAMESPACE_IDENTIFIER as USERS_NAMESPACE_ID
+from .general import api as general_ns
+from .general.definitions import NAMESPACE_IDENTIFIER as GENERAL_NAMESPACE_ID
 
 
 def init_app(app):
@@ -30,6 +32,7 @@ def init_app(app):
     # Add the namespaces to the API object
     api.add_namespace(printers_ns, '/' + PRINTERS_NAMESPACE_ID)
     api.add_namespace(users_ns, '/' + USERS_NAMESPACE_ID)
+    api.add_namespace(general_ns, '/' + GENERAL_NAMESPACE_ID)
 
     # Register the API blueprint
     app.register_blueprint(api_bp, url_prefix='/api')

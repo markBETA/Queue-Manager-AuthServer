@@ -1,6 +1,6 @@
 [submodule "authserver/blacklist_manager"]
 	path = authserver/blacklist_manager
 	url = git@github.com:BCN3D/Queue-Manager-Blacklist-Manager.git
-[submodule "authserver/database/app"]
-	path = authserver/database/app
+[submodule "authserver/database/application"]
+	path = authserver/database/application
 	url = git@github.com:BCN3D/Queue-Manager-App-Database.git

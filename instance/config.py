@@ -25,12 +25,14 @@ class Config(object):
     REDIS_SERVER_PORT = 6379
     TOKEN_BLACKLIST_REDIS_DB = 0
 
-    JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(seconds=45)
+    JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(days=45)
     JWT_REFRESH_TOKEN_EXPIRES = datetime.timedelta(days=30)
     JWT_BLACKLIST_ENABLED = True
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
     JWT_ERROR_MESSAGE_KEY = "message"
     JWT_IDENTITY_CLAIM = "sub"
     JWT_ALGORITHM = "RS256"
+
+    IDENTITY_HEADER = "X-Identity"
 
     CORS_ALLOWED_ORIGINS = None
