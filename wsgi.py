@@ -12,4 +12,4 @@ __status__ = "Development"
 
 from authserver import create_app
 
-app = create_app(__name__, init_db_manager_values=True)
+app = create_app(__name__, init_db_manager_values=False)
