@@ -37,6 +37,6 @@ def user_initial_values():
 def printer_initial_values():
     return [
         PrinterAuth(
-            id=1, serialNumber="020.238778.0823", printerKey=generate_password_hash('rdRwtlHI$$Y!L:Mff(JtHjUdAf!{w_in')
+            id=1, serialNumber="020.180622.3180", printerKey=generate_password_hash('rdRwtlHI$$Y!L:Mff(JtHjUdAf!{w_in')
         ),
     ]
