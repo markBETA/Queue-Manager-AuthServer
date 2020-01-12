@@ -41,8 +41,8 @@ bind_key = "auth"
 def init_db(app):
     """Clear existing data and create new tables."""
     with app.app_context():
-        db_conn.drop_all()
-        db_conn.create_all(bind=[bind_key])
+        db_conn.drop_all(bind=bind_key)
+        db_conn.create_all(bind=bind_key)
 
 
 @click.command('init-'+bind_key+'-db')
